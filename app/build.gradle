@@ -30,7 +30,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+
     }
+
 }
 
 dependencies {
@@ -41,10 +43,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    // Room for database
-    implementation 'androidx.room:room-common:2.5.0'
-    annotationProcessor 'androidx.room:room-compiler:2.5.0'
 
     // RecyclerView
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
@@ -59,7 +57,10 @@ dependencies {
     // Rounded Image View
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
+    // Room for database
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
+
+
 }

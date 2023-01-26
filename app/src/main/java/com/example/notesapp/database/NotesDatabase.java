@@ -14,7 +14,7 @@ public abstract class NotesDatabase extends RoomDatabase {
 
     private static NotesDatabase notesDatabase;
 
-    private static synchronized NotesDatabase getDatabase(Context context) {
+    public static synchronized NotesDatabase getDatabase(Context context) {
         if (notesDatabase == null) {
             notesDatabase = Room.databaseBuilder(
                     context,
