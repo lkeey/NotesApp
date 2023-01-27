@@ -1,5 +1,6 @@
 package com.example.notesapp.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -47,11 +48,9 @@ public class MainActivity extends AppCompatActivity {
                 if(noteList.size() == 0) {
                     noteList.addAll(notesList);
                     notesAdapter.notifyDataSetChanged();
-                    Toast.makeText(MainActivity.this, "add", Toast.LENGTH_SHORT).show();
                 } else {
                     noteList.add(0, notesList.get(0));
                     notesAdapter.notifyItemInserted(0);
-                    Toast.makeText(MainActivity.this, "not add", Toast.LENGTH_SHORT).show();
                 }
                 notesRecyclerView.smoothScrollToPosition(0);
             }
@@ -89,4 +88,11 @@ public class MainActivity extends AppCompatActivity {
         getNotes();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_ADD_NOTE && resultCode == RESULT_OK) {
+            getNotes();
+        }
+    }
 }

@@ -93,17 +93,18 @@
                 android:textColorHint="@color/textHint"
                 android:textSize="@dimen/_13ssp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/subtitleIndicator"
                 app:layout_constraintTop_toBottomOf="@id/textDateTime"/>
 
-            <View android:id="@+id/subtitleIndicator"
-                android:layout_width="@dimen/_5ssp"
+            <View
+                android:id="@+id/subtitleIndicator"
+                android:layout_width="@dimen/_5sdp"
                 android:layout_height="0dp"
                 android:layout_marginStart="@dimen/_12sdp"
                 android:background="@drawable/background_subtitle_indicator"
-                app:layout_constraintBottom_toBottomOf="@id/inputNoteTitle"
+                app:layout_constraintBottom_toBottomOf="@id/inputNoteSubtitle"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/inputNoteSubtitle"/>
+                app:layout_constraintTop_toTopOf="@id/inputNoteSubtitle" />
 
             <EditText
                 android:id="@+id/inputNote"
@@ -129,5 +130,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <include layout="@layout/layout_miscellaneous" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
