@@ -1,6 +1,8 @@
 package com.example.notesapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -12,14 +14,19 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.notesapp.R;
+import com.example.notesapp.adapters.NotesAdapter;
 import com.example.notesapp.database.NotesDatabase;
 import com.example.notesapp.entities.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_ADD_NOTE = 1;
+    private RecyclerView notesRecyclerView;
+    private List<Note> noteList;
+    private NotesAdapter notesAdapter;
 
     private void getNotes() {
 
@@ -33,10 +40,20 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onPostExecute(List<Note> noteList) {
+            protected void onPostExecute(List<Note> notesList) {
                 super.onPostExecute(noteList);
 //                Toast.makeText(MainActivity.this, "NOTE WAS CREATED", Toast.LENGTH_SHORT).show();
                 Log.d("MY_NOTES", noteList.toString());
+                if(noteList.size() == 0) {
+                    noteList.addAll(notesList);
+                    notesAdapter.notifyDataSetChanged();
+                    Toast.makeText(MainActivity.this, "add", Toast.LENGTH_SHORT).show();
+                } else {
+                    noteList.add(0, notesList.get(0));
+                    notesAdapter.notifyItemInserted(0);
+                    Toast.makeText(MainActivity.this, "not add", Toast.LENGTH_SHORT).show();
+                }
+                notesRecyclerView.smoothScrollToPosition(0);
             }
         }
         new GetNotesTask().execute();
@@ -56,6 +73,18 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
         });
+
+        notesRecyclerView = findViewById(R.id.notesRecyclerView);
+        notesRecyclerView.setLayoutManager(
+                new StaggeredGridLayoutManager(
+                        2,
+                        StaggeredGridLayoutManager.VERTICAL
+                )
+        );
+
+        noteList = new ArrayList<>();
+        notesAdapter = new NotesAdapter(noteList);
+        notesRecyclerView.setAdapter(notesAdapter);
 
         getNotes();
     }
