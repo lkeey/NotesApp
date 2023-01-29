@@ -2,4 +2,6 @@
     <string name="app_name">NotesApp</string>
     <string name="my_notes">Me Notes</string>
     <string name="search_notes">Search notes</string>
+    <string name="add_image">Add Image</string>
+    <string name="add_url">Add Url</string>
 </resources>
