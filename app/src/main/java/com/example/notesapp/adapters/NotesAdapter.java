@@ -3,11 +3,13 @@ package com.example.notesapp.adapters;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -86,8 +88,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             }
 
             if (note.getImagePath() != null) {
-                imageNote.setImageBitmap(BitmapFactory.decodeFile(note.getImagePath()));
-                imageNote.setVisibility(View.VISIBLE);
+                try {
+                    Log.i("Note", note.getTitle() + " -- " + note.getImagePath());
+                    imageNote.setImageBitmap(BitmapFactory.decodeFile(note.getImagePath()));
+                    imageNote.setVisibility(View.VISIBLE);
+                } catch (Exception e) {
+                    Log.i("ERROR", note.getTitle() + " -- " + e.getMessage());
+                }
+
+                Log.i("END", note.getTitle() + " -- " + note.getImagePath());
             } else {
                 imageNote.setVisibility(View.GONE);
             }
