@@ -1,8 +1,10 @@
 package com.example.notesapp.adapters;
 
+import android.annotation.SuppressLint;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notesapp.R;
 import com.example.notesapp.entities.Note;
+import com.example.notesapp.listeners.NotesListener;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
@@ -23,6 +26,12 @@ import java.util.List;
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> {
 
     private List<Note> notes;
+    private NotesListener notesListener;
+
+    public NotesAdapter(List<Note> notes, NotesListener notesListener) {
+        this.notes = notes;
+        this.notesListener = notesListener;
+    }
 
     @NonNull
     @Override
@@ -37,8 +46,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NoteViewHolder holder, final int position) {
         holder.setNote(notes.get(position));
+        holder.layoutNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notesListener.onNoteClicked(notes.get(position), position);
+            }
+        });
     }
 
     @Override
@@ -89,8 +104,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
             if (note.getImagePath() != null) {
                 try {
-                    Log.i("Note", note.getTitle() + " -- " + note.getImagePath());
-                    imageNote.setImageBitmap(BitmapFactory.decodeFile(note.getImagePath()));
+                    Log.i("Note", note.getTitle() + " -- " + Uri.parse(note.getImagePath()));
+                    imageNote.setImageURI(Uri.parse(note.getImagePath()));
                     imageNote.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     Log.i("ERROR", note.getTitle() + " -- " + e.getMessage());

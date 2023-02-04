@@ -1,6 +1,8 @@
 package com.example.notesapp.entities;
 
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

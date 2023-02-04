@@ -19,6 +19,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Patterns;
@@ -51,6 +52,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     private ImageView imageNote;
     private LinearLayout layoutUrl;
     private String selectedImagePath;
+    private Uri selectedImageUri;
     private AlertDialog dialogAddUrl;
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_SELECT_IMAGE = 2;
@@ -125,15 +127,17 @@ public class CreateNoteActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_SELECT_IMAGE && resultCode == RESULT_OK) {
             if (data != null) {
-                Uri selectedImageUri = data.getData();
+                selectedImageUri = data.getData();
+                Toast.makeText(this, "OKAY#", Toast.LENGTH_SHORT).show();
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     imageNote.setImageBitmap(bitmap);
                     imageNote.setVisibility(View.VISIBLE);
 
-                    selectedImagePath = getPathFromUri(selectedImageUri);
-
+//                    selectedImagePath = getPathFromUri(selectedImageUri);
+//                    selectedImagePath = selectedImageUri.toString();
+//                    Toast.makeText(this, selectedImagePath, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(CreateNoteActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -151,12 +155,26 @@ public class CreateNoteActivity extends AppCompatActivity {
             Toast.makeText(CreateNoteActivity.this, String.valueOf(grantResults[0]), Toast.LENGTH_SHORT).show();
             Toast.makeText(CreateNoteActivity.this, String.valueOf(PackageManager.PERMISSION_GRANTED), Toast.LENGTH_SHORT).show();
 
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "All OKAY", Toast.LENGTH_SHORT).show();
                 selectImage();
             } else {
                 Toast.makeText(CreateNoteActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
+
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == REQUEST_CODE_STORAGE_PERMISSION) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission granted.
+//                Toast.makeText(this, "All OKAY", Toast.LENGTH_SHORT).show();
+//                selectImage();
+//            } else {
+//                // User refused to grant permission.
+//                Toast.makeText(CreateNoteActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+
     }
 
     private void selectImage() {
@@ -259,16 +277,56 @@ public class CreateNoteActivity extends AppCompatActivity {
         layoutMiscellaneous.findViewById(R.id.layoutAddImage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(
                             CreateNoteActivity.this,
-                            new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                            new String[] {
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_MEDIA_IMAGES
+                            },
                             REQUEST_CODE_STORAGE_PERMISSION
                     );
+                    Toast.makeText(CreateNoteActivity.this, "SHOW", Toast.LENGTH_SHORT).show();
                 } else {
                     selectImage();
                 }
+
+//                if (
+//                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+//                        && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                ) {
+//                    Toast.makeText(CreateNoteActivity.this, "SHOW", Toast.LENGTH_SHORT).show();
+//
+//                    ActivityCompat.requestPermissions(
+//                            CreateNoteActivity.this,
+//                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                            REQUEST_CODE_STORAGE_PERMISSION);
+//                } else {
+//                    selectImage();
+//                }
+
+//                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//
+//                    // Should we show an explanation?
+//                    if (shouldShowRequestPermissionRationale(
+//                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//                        // Explain to the user why we need to read the contacts
+//                        Toast.makeText(CreateNoteActivity.this, "SHOW", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    ActivityCompat.requestPermissions(
+//                            CreateNoteActivity.this,
+//                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                            REQUEST_CODE_STORAGE_PERMISSION);
+//
+//                    // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
+//                    // app-defined int constant that should be quite unique
+//
+//                    return;
+//                }
             }
         });
 
@@ -288,13 +346,15 @@ public class CreateNoteActivity extends AppCompatActivity {
             Toast.makeText(CreateNoteActivity.this, "Note cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
+
         final Note note = new Note();
+
         note.setTitle(inputNoteTitle.getText().toString());
         note.setSubtitle(inputNoteSubtitle.getText().toString());
         note.setText(inputText.getText().toString());
         note.setDateTime(textDateTime.getText().toString());
         note.setColor(selectedNoteColor);
-        note.setImagePath(selectedImagePath);
+        note.setImagePath(selectedImageUri.toString());
 
         if (layoutUrl.getVisibility() == View.VISIBLE) {
             note.setWebLink(textUrl.getText().toString());
