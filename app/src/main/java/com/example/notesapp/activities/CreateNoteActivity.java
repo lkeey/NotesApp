@@ -67,6 +67,10 @@ public class CreateNoteActivity extends AppCompatActivity {
         if(alreadyAvailableNote.getImagePath() != null && !alreadyAvailableNote.getImagePath().trim().isEmpty()) {
             imageNote.setImageBitmap(BitmapFactory.decodeFile(alreadyAvailableNote.getImagePath()));
             imageNote.setVisibility(View.VISIBLE);
+
+            findViewById(R.id.imageRemovePicture).setVisibility(View.VISIBLE);
+
+            selectedImagePath = alreadyAvailableNote.getImagePath();
         }
 
         if(alreadyAvailableNote.getWebLink() != null && !alreadyAvailableNote.getWebLink().trim().isEmpty()) {
@@ -156,7 +160,10 @@ public class CreateNoteActivity extends AppCompatActivity {
                     Toast.makeText(this, "PATH", Toast.LENGTH_SHORT).show();
                     selectedImagePath = getPathFromUri(selectedImageUri);
 //                    selectedImagePath = selectedImageUri.toString();
-                    Toast.makeText(this, selectedImagePath, Toast.LENGTH_SHORT).show();
+
+                    findViewById(R.id.imageRemovePicture).setVisibility(View.VISIBLE);
+
+                    Toast.makeText(this, "ImagePath - " + selectedImagePath, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(CreateNoteActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -461,6 +468,24 @@ public class CreateNoteActivity extends AppCompatActivity {
             alreadyAvailableNote = (Note) getIntent().getSerializableExtra("note");
             setViewOrUpdateNote();
         }
+
+        findViewById(R.id.imageRemoveUrl).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textUrl.setText(null);
+                layoutUrl.setVisibility(View.GONE);
+            }
+        });
+
+        findViewById(R.id.imageRemovePicture).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageNote.setImageBitmap(null);
+                imageNote.setVisibility(View.GONE);
+                findViewById(R.id.imageRemovePicture).setVisibility(View.GONE);
+                selectedImagePath = "";
+            }
+        });
 
         initMiscellaneous();
 
