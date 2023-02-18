@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
     private List<Note> noteList;
     private NotesAdapter notesAdapter;
 
-    private void getNotes(final int requestCode) {
+    private void getNotes(final int requestCode, final boolean isNoteDeleted) {
 
         @SuppressLint("StaticFieldLeak")
         class GetNotesTask extends AsyncTask<Void, Void, List<Note>> {
@@ -76,8 +76,15 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
                     Toast.makeText(MainActivity.this, "UPDATE", Toast.LENGTH_SHORT).show();
 
                     noteList.remove(noteClickedPosition);
-                    noteList.add(noteClickedPosition, notes.get(noteClickedPosition));
-                    notesAdapter.notifyItemChanged(noteClickedPosition);
+
+                    if (isNoteDeleted) {
+//                        if note has deleted
+                        notesAdapter.notifyItemRemoved(noteClickedPosition);
+                    } else {
+                        noteList.add(noteClickedPosition, notes.get(noteClickedPosition));
+                        notesAdapter.notifyItemChanged(noteClickedPosition);
+                    }
+
                 }
             }
         }
@@ -111,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         notesAdapter = new NotesAdapter(noteList, this);
         notesRecyclerView.setAdapter(notesAdapter);
 
-        getNotes(REQUEST_CODE_SHOW_NOTES);
+        getNotes(REQUEST_CODE_SHOW_NOTES, false);
     }
 
     @Override
@@ -121,10 +128,10 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         Toast.makeText(this, "RESULT - " + String.valueOf(resultCode), Toast.LENGTH_SHORT).show();
 
         if (requestCode == REQUEST_CODE_ADD_NOTE && resultCode == RESULT_OK) {
-            getNotes(REQUEST_CODE_ADD_NOTE);
+            getNotes(REQUEST_CODE_ADD_NOTE, false);
         } else if (requestCode == REQUEST_CODE_UPDATE_NOTE && resultCode == RESULT_OK){
             if (data != null) {
-                getNotes(REQUEST_CODE_UPDATE_NOTE);
+                getNotes(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted", false));
             }
         }
     }
